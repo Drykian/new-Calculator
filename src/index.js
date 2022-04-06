@@ -32,6 +32,11 @@ function displayNumbers(char, next = false){
         $(".display1").html(calc.number1);
     }
 }
+function displayNewNumber(char){
+    number = operators[char]({ calc, nextNumber, });
+    getNumber();
+    $(".display1").html(number);
+}
 // functions
 
 $(".number").on("click", function () {
@@ -47,7 +52,6 @@ $(".number").on("click", function () {
     getNumber();
 
     $(".display1").html(number);
-    console.log(char);
 })
 
 $(".symbol").on("click", function () {
@@ -57,6 +61,9 @@ $(".symbol").on("click", function () {
             if(nextNumber && nextOperator){
                 operators[calc.currentOperator]({ calc, nextNumber, });
                 displayNumbers(char, true);
+                calc.number2 = calc.number1
+                calc.currentOperator = char;
+                number = ""
                 nextOperator = false
             }else{
                 if(nextNumber){
@@ -83,21 +90,18 @@ $(".symbol").on("click", function () {
             break;
         case "=":
             nextOperator = false
-            number = calc.number1.toString();
+            nextNumber = false
             operators[calc.currentOperator]({ calc, nextNumber, });
+            number = calc.number1.toString();
             displayNumbers(char);
             break;
-            
-        default: 
-            number = operators[char]({ calc, nextNumber, });
-            console.log(number)
-            getNumber();
-            $(".display1").html(number);
-            
+        case "⌫":
+            displayNewNumber(char);
+            break;
+        case "±":
+            displayNewNumber(char);
+            break;
+
+        default: console.log("something is wrong") 
     }
-
-    console.log(calc.number1)
-    console.log(calc.number2)
-
-
 })
