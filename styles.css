@@ -1,0 +1,25 @@
+.calculator {
+    text-align: center;
+    margin-top: 100px;
+}
+
+.number, .symbol{
+    width: 80px;
+    margin: 4px;
+}
+
+.display {
+    width: 358px;
+    height: 80px;
+    margin: 4px;
+}
+
+.display1 {
+    text-align: right;
+}
+
+.display2 {
+    text-align: right;
+    color: dimgray;
+    margin: 0;
+}
