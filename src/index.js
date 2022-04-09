@@ -3,10 +3,13 @@ var number = ""
 var nextNumber = false
 var nextOperator = false
 
-operators = { "⌫": calc.delete, "±": calc.negatify, "C": calc.reset,
-              "+": calc.add, "-": calc.subtract, "/": calc.divide, 
-              "x": calc.multiply}
-// functions
+const operators = {
+    "⌫": calc.delete, "±": calc.negatify, "+": calc.add,
+    "-": calc.subtract, "/": calc.divide, "x": calc.multiply
+}
+
+
+// (functions
 function getNumber() {
     if (nextNumber) {
         calc.number2 = parseFloat(number)
@@ -17,58 +20,79 @@ function getNumber() {
 }
 
 function reset() {
-    nextNumber = false
     number = ""
-    $(".display2").html("")
-    $(".display1").html(0);
+    nextNumber = false
+    nextOperator = false
+    calc.reset()
 }
 
-function displayNumbers(char, next = false){
-    if(next){
+function displayNumbers(char = "", next = false) {
+    if (next) {
         $(".display2").html(calc.number1 + char)
-        $(".display1").html(calc.number1);
-    }else{
-        $(".display2").html(number + calc.currentOperator + calc.number2 + char)
+        $(".display1").html(calc.number2);
+    } else {
+        var Fnumber = $(".display2").html()
+        if (char === "=") {
+            $(".display2").html(Fnumber + calc.number2 + char)
+        } else {
+            $(".display2").html("")
+        }
         $(".display1").html(calc.number1);
     }
 }
-function displayNewNumber(char){
+
+function displayNewNumber(char) {
     number = operators[char]({ calc, nextNumber, });
     getNumber();
     $(".display1").html(number);
 }
-// functions
 
+function dealWithDisplay(char) {
+    if (number === "0") {
+        number = "";
+    } else if (number === "" && char === ".") {
+        number = "0";
+    }
+    if (calc.currentOperator == "=") {
+        reset();
+        $(".display2").html("")
+        number = number + char;
+    } else {
+        number = number + char;
+    }
+}
+// functions)
+
+
+// (numbers
 $(".number").on("click", function () {
     var char = $(this).html();
-    if(number === "0"){
-        number = ""
-    }
-    if(number == "" && char == "."){
-        number = "0"
-    }
-    number = number + char;
+
+    dealWithDisplay(char);
 
     getNumber();
-
-    $(".display1").html(number);
+   
+    $(".display1").html(number)
 })
+// numbers)
 
+
+// (symbols
 $(".symbol").on("click", function () {
     var char = $(this).html();
     switch (char) {
         case "-": case "+": case "/": case "x":
-            if(nextNumber && nextOperator){
+            if (nextNumber && nextOperator) {
                 operators[calc.currentOperator]({ calc, nextNumber, });
                 displayNumbers(char, true);
                 calc.number2 = calc.number1
                 calc.currentOperator = char;
                 number = ""
                 nextOperator = false
-            }else{
-                if(nextNumber){
+            } else {
+                if (nextNumber) {
                     displayNumbers(char, true);
-                }else{
+                } else {
                     calc.number1 = parseFloat(number)
                     calc.number2 = calc.number1
                     displayNumbers(char, true);
@@ -80,12 +104,15 @@ $(".symbol").on("click", function () {
             break;
         case "C":
             reset();
-            operators[char]({ calc, nextNumber, });
+            displayNumbers()
             break;
         case "CE":
+            if (calc.currentOperator === "="){
+                reset()
+            }
             number = "0"
             getNumber()
-            $(".display1").html(number);
+            displayNumbers(calc.currentOperator, nextNumber)
             number = ""
             break;
         case "=":
@@ -94,14 +121,20 @@ $(".symbol").on("click", function () {
             operators[calc.currentOperator]({ calc, nextNumber, });
             number = calc.number1.toString();
             displayNumbers(char);
+            calc.currentOperator = char
             break;
         case "⌫":
-            displayNewNumber(char);
+            if (calc.currentOperator === "="){
+                $(".display2").html("")
+            }else{
+                displayNewNumber(char);
+            }
             break;
         case "±":
             displayNewNumber(char);
             break;
 
-        default: console.log("something is wrong") 
+        default: console.log("something is wrong")
     }
 })
+// symbols)

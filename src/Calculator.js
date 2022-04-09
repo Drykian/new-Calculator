@@ -18,7 +18,7 @@ class Calculator{
         calc.number1 *= calc.number2
     }
 
-    reset({calc, nextNumber}){
+    reset(){
         calc.number1 = 0
         calc.number2 = 0
         calc.currentOperator = ""
