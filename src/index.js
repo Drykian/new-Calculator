@@ -84,8 +84,8 @@ $(".symbol").on("click", function () {
         case "-": case "+": case "/": case "x":
             if (nextNumber && nextOperator) {
                 operators[calc.currentOperator]({ calc, nextNumber, });
-                displayNumbers(char, true);
                 calc.number2 = calc.number1
+                displayNumbers(char, true);
                 calc.currentOperator = char;
                 number = ""
                 nextOperator = false
