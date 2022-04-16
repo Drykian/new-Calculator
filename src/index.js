@@ -2,6 +2,7 @@ var calc = new Calculator();
 var number = ""
 var nextNumber = false
 var nextOperator = false
+var result = true
 
 const operators = {
     "⌫": calc.delete, "±": calc.negatify, "+": calc.add,
@@ -23,17 +24,17 @@ function reset() {
     number = ""
     nextNumber = false
     nextOperator = false
+    result = false
     calc.reset()
 }
 
-function displayNumbers(char = "", next = false) {
+function displayNumbers(char = "", next = false, result = false) {
     if (next) {
         $(".display2").html(calc.number1 + char)
         $(".display1").html(calc.number2);
     } else {
-        var Fnumber = $(".display2").html()
-        if (char === "=") {
-            $(".display2").html(Fnumber + calc.number2 + char)
+        if (result) {
+            $(".display2").html(number + calc.currentOperator +calc.number2 + char)
         } else {
             $(".display2").html("")
         }
@@ -47,13 +48,13 @@ function displayNewNumber(char) {
     $(".display1").html(number);
 }
 
-function dealWithDisplay(char) {
+function dealWithDisplay(char, result) {
     if (number === "0") {
         number = "";
     } else if (number === "" && char === ".") {
         number = "0";
     }
-    if (calc.currentOperator == "=") {
+    if (result) {
         reset();
         $(".display2").html("")
         number = number + char;
@@ -68,7 +69,7 @@ function dealWithDisplay(char) {
 $(".number").on("click", function () {
     var char = $(this).html();
 
-    dealWithDisplay(char);
+    dealWithDisplay(char, result);
 
     getNumber();
    
@@ -89,6 +90,7 @@ $(".symbol").on("click", function () {
                 calc.currentOperator = char;
                 number = ""
                 nextOperator = false
+                result = false
             } else {
                 if (nextNumber) {
                     displayNumbers(char, true);
@@ -100,6 +102,7 @@ $(".symbol").on("click", function () {
                 number = "";
                 calc.currentOperator = char;
                 nextNumber = true
+                result = false
             }
             break;
         case "C":
@@ -107,7 +110,7 @@ $(".symbol").on("click", function () {
             displayNumbers()
             break;
         case "CE":
-            if (calc.currentOperator === "="){
+            if (result){
                 reset()
             }
             number = "0"
@@ -118,14 +121,17 @@ $(".symbol").on("click", function () {
         case "=":
             nextOperator = false
             nextNumber = false
-            operators[calc.currentOperator]({ calc, nextNumber, });
+            result = true
             number = calc.number1.toString();
-            displayNumbers(char);
-            calc.currentOperator = char
+            operators[calc.currentOperator]({ calc, nextNumber, });
+            displayNumbers(char, nextNumber, result);
+            number = calc.number1.toString();
             break;
         case "⌫":
-            if (calc.currentOperator === "="){
+            if (result){
                 $(".display2").html("")
+            }else if(number === ""){ 
+                 
             }else{
                 displayNewNumber(char);
             }
