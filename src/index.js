@@ -68,6 +68,7 @@ function dealWithDisplay(char, result) {
 // (numbers
 $(".number").on("click", function () {
     var char = $(this).html();
+    if (char == '.' && char.indexOf('.') !== -1) return;
 
     dealWithDisplay(char, result);
 

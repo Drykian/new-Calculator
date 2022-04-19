@@ -29,7 +29,9 @@ class Calculator{
         }else{
             var number = calc.number1.toString().slice(0, -1)
         }
-        if (number == ""){
+        if (number.charAt(number.length -1) == '.') {
+            number = number.slice(0, -1);
+        } else if (number == "") {
             number = "0"
         }
         return (number)
